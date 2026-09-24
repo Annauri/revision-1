@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Practice Game</title>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --secondary: #50E3C2;
+            --accent: #FF6B6B;
+            --bg: #F4F7F6;
+            --text: #333;
+            --card-bg: #fff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background-color: #fff;
+            color: var(--primary);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Game Containers */
+        .game-section {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s;
+        }
+
+        .game-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+            color: var(--text);
+        }
+
+        /* --- Game 1: Vocabulary Match --- */
+        .match-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .match-item {
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 18px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .match-item:hover {
+            background: #e0e0e0;
+        }
+
+        .match-item.selected {
+            border-color: var(--primary);
+            background: #e3f2fd;
+        }
+
+        .match-item.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .emoji-large {
+            font-size: 32px;
+        }
+
+        /* --- Game 2: Adjectives --- */
+        .quiz-question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border-left: 5px solid var(--accent);
+        }
+
+        .options {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .opt-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .opt-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+        .feedback.correct { color: green; }
+        .feedback.wrong { color: red; }
+
+        /* --- Game 3: Time --- */
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .time-card {
+            background: #fff;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .time-card:hover { border-color: var(--primary); }
+        .time-card.selected { background: #e3f2fd; border-color: var(--primary); }
+        .time-card.correct { background: #d4edda; border-color: green; }
+
+        .clock-face {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        /* --- Game 4: Grammar (This/That) --- */
+        .grammar-scenario {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            border: 2px solid #eee;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        .visual-cue {
+            font-size: 40px;
+            position: relative;
+        }
+        
+        .distance-marker {
+            font-size: 12px;
+            color: #999;
+            display: block;
+            text-align: center;
+        }
+
+        .grammar-options button {
+            margin-left: 10px;
+        }
+
+        /* Score Board */
+        .score-board {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="score-board">Score: <span id="score">0</span></div>
+
+    <h1>English Practice Zone</h1>
+    <p class="subtitle">Select a topic to start practicing!</p>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showSection('vocab')">1. Vocabulary (Objects)</button>
+        <button class="tab-btn" onclick="showSection('adj')">2. Adjectives</button>
+        <button class="tab-btn" onclick="showSection('time')">3. Time</button>
+        <button class="tab-btn" onclick="showSection('grammar')">4. This/That/These/Those</button>
+    </div>
+
+    <!-- SECTION 1: VOCABULARY -->
+    <div id="vocab" class="game-section active">
+        <h2>Match the words with the pictures</h2>
+        <p>Click a word on the left, then click the matching emoji on the right.</p>
+        <div class="match-container">
+            <div class="col" id="vocab-words">
+                <!-- Populated by JS -->
+            </div>
+            <div class="col" id="vocab-images">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+        <button onclick="initVocab()" style="margin-top:20px; padding:10px; cursor:pointer;">Reset Game</button>
+    </div>
+
+    <!-- SECTION 2: ADJECTIVES -->
+    <div id="adj" class="game-section">
+        <h2>Choose the correct adjective</h2>
+        <div id="adj-container">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <!-- SECTION 3: TIME -->
+    <div id="time" class="game-section">
+        <h2>Match the times</h2>
+        <p>Click the digital time, then click the correct phrase.</p>
+        <div class="match-container">
+            <div class="col" id="time-digital">
+                <!-- Populated by JS -->
+            </div>
+            <div class="col" id="time-text">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+        <button onclick="initTime()" style="margin-top:20px; padding:10px; cursor:pointer;">Reset Game</button>
+    </div>
+
+    <!-- SECTION 4: GRAMMAR -->
+    <div id="grammar" class="game-section">
+        <h2>This / That / These / Those</h2>
+        <p>Look at the distance (👇 near, 👉 far) and number (1 or many).</p>
+        <div id="grammar-container">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        const scoreEl = document.getElementById('score');
+
+        function addScore(points) {
+            score += points;
+            scoreEl.innerText = score;
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('.game-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // --- VOCAB GAME LOGIC ---
+        const vocabData = [
+            { word: 'necklace', emoji: '📿' },
+            { word: 'gloves', emoji: '🧤' },
+            { word: 'scarf', emoji: '🧣' },
+            { word: 'sweater', emoji: '🧥' },
+            { word: 'handbag', emoji: '👜' },
+            { word: 'cap', emoji: '🧢' },
+            { word: 'wallet', emoji: '💰' },
+            { word: 'notebook', emoji: '📓' },
+            { word: 'phone charger', emoji: '🔌' },
+            { word: 'laptop', emoji: '💻' },
+            { word: 'sunglasses', emoji: '🕶️' },
+            { word: 'books', emoji: '📚' },
+            { word: 'camera', emoji: '📷' },
+            { word: 'watch', emoji: '⌚' },
+            { word: 'lamp', emoji: '💡' },
+            { word: 'bike', emoji: '🚲' },
+            { word: 'rings', emoji: '💍' },
+            { word: 'skateboard', emoji: '🛹' },
+            { word: 'suitcase', emoji: '🧳' },
+            { word: 'umbrella', emoji: '️☂️' }
+        ];
+
+        let selectedWord = null;
+        let selectedEmoji = null;
+
+        function initVocab() {
+            const wordsCol = document.getElementById('vocab-words');
+            const imgsCol = document.getElementById('vocab-images');
+            wordsCol.innerHTML = '';
+            imgsCol.innerHTML = '';
+            selectedWord = null;
+            selectedEmoji = null;
+
+            // Shuffle arrays
+            let words = [...vocabData].sort(() => Math.random() - 0.5);
+            let imgs = [...vocabData].sort(() => Math.random() - 0.5);
+
+            words.forEach(item => {
+                let div = document.createElement('div');
+                div.className = 'match-item';
+                div.innerText = item.word;
+                div.dataset.val = item.word;
+                div.onclick = () => handleWordClick(div);
+                wordsCol.appendChild(div);
+            });
+
+            imgs.forEach(item => {
+                let div = document.createElement('div');
+                div.className = 'match-item emoji-large';
+                div.innerText = item.emoji;
+                div.dataset.val = item.word; // match by word key
+                div.onclick = () => handleImgClick(div);
+                imgsCol.appendChild(div);
+            });
+        }
+
+        function handleWordClick(el) {
+            if(el.classList.contains('correct')) return;
+            document.querySelectorAll('#vocab-words .match-item').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedWord = el;
+            checkMatch();
+        }
+
+        function handleImgClick(el) {
+            if(el.classList.contains('correct')) return;
+            document.querySelectorAll('#vocab-images .match-item').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedEmoji = el;
+            checkMatch();
+        }
+
+        function checkMatch() {
+            if (selectedWord && selectedEmoji) {
+                if (selectedWord.dataset.val === selectedEmoji.dataset.val) {
+                    selectedWord.classList.add('correct');
+                    selectedEmoji.classList.add('correct');
+                    selectedWord.classList.remove('selected');
+                    selectedEmoji.classList.remove('selected');
+                    addScore(10);
+                } else {
+                    setTimeout(() => {
+                        selectedWord.classList.remove('selected');
+                        selectedEmoji.classList.remove('selected');
+                    }, 500);
+                }
+                selectedWord = null;
+                selectedEmoji = null;
+            }
+        }
+
+        // --- ADJECTIVE GAME LOGIC ---
+        const adjData = [
+            { q: "My phone is _____. I can't call anyone.", options: ['beautiful', 'broken', 'soft'], ans: 'broken' },
+            { q: "The gold ring is very _____.", options: ['heavy', 'beautiful', 'broken'], ans: 'beautiful' },
+            { q: "This feather pillow is very _____.", options: ['soft', 'hard', 'square'], ans: 'soft' },
+            { q: "The suitcase is full of books. It is _____.", options: ['light', 'heavy', 'modern'], ans: 'heavy' },
+            { q: "I like your _____ sweater. Is it new?", options: ['comfortable', 'broken', 'old'], ans: 'comfortable' },
+            { q: "The clock on the wall is _____.", options: ['round', 'soft', 'broken'], ans: 'round' }
+        ];
+
+        function initAdj() {
+            const container = document.getElementById('adj-container');
+            container.innerHTML = '';
+            adjData.forEach((item, index) => {
+                let div = document.createElement('div');
+                div.className = 'quiz-question';
+                let html = `<p><strong>${index+1}.</strong> ${item.q}</p><div class="options">`;
+                item.options.forEach(opt => {
+                    html += `<button class="opt-btn" onclick="checkAdj(this, '${opt}', '${item.ans}')">${opt}</button>`;
+                });
+                html += `</div><div class="feedback"></div>`;
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+        }
+
+        function checkAdj(btn, chosen, correct) {
+            const feedback = btn.parentElement.nextElementSibling;
+            if (chosen === correct) {
+                btn.style.background = '#d4edda';
+                btn.style.borderColor = 'green';
+                feedback.innerText = "Correct!";
+                feedback.className = "feedback correct";
+                addScore(5);
+            } else {
+                btn.style.background = '#f8d7da';
+                btn.style.borderColor = 'red';
+                feedback.innerText = "Try again!";
+                feedback.className = "feedback wrong";
+            }
+        }
+
+        // --- TIME GAME LOGIC ---
+        const timeData = [
+            { digital: '08:00', text: "eight o'clock" },
+            { digital: '04:30', text: "half past four" },
+            { digital: '02:15', text: "a quarter past two" },
+            { digital: '11:45', text: "a quarter to twelve" },
+            { digital: '07:55', text: "five to eight" },
+            { digital: '01:20', text: "twenty past one" }
+        ];
+
+        let selTimeDig = null;
+        let selTimeText = null;
+
+        function initTime() {
+            const digCol = document.getElementById('time-digital');
+            const textCol = document.getElementById('time-text');
+            digCol.innerHTML = '';
+            textCol.innerHTML = '';
+            selTimeDig = null;
+            selTimeText = null;
+
+            let digs = [...timeData].sort(() => Math.random() - 0.5);
+            let texts = [...timeData].sort(() => Math.random() - 0.5);
+
+            digs.forEach(item => {
+                let div = document.createElement('div');
+                div.className = 'time-card';
+                div.innerHTML = `<div class="clock-face">🕒</div><strong>${item.digital}</strong>`;
+                div.dataset.val = item.digital;
+                div.onclick = () => handleTimeDigClick(div);
+                digCol.appendChild(div);
+            });
+
+            texts.forEach(item => {
+                let div = document.createElement('div');
+                div.className = 'time-card';
+                div.innerText = item.text;
+                div.dataset.val = item.digital; // link by digital time
+                div.onclick = () => handleTimeTextClick(div);
+                textCol.appendChild(div);
+            });
+        }
+
+        function handleTimeDigClick(el) {
+            if(el.classList.contains('correct')) return;
+            document.querySelectorAll('#time-digital .time-card').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+            selTimeDig = el;
+            checkTimeMatch();
+        }
+
+        function handleTimeTextClick(el) {
+            if(el.classList.contains('correct')) return;
+            document.querySelectorAll('#time-text .time-card').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+            selTimeText = el;
+            checkTimeMatch();
+        }
+
+        function checkTimeMatch() {
+            if (selTimeDig && selTimeText) {
+                if (selTimeDig.dataset.val === selTimeText.dataset.val) {
+                    selTimeDig.classList.add('correct');
+                    selTimeText.classList.add('correct');
+                    selTimeDig.classList.remove('selected');
+                    selTimeText.classList.remove('selected');
+                    addScore(10);
+                } else {
+                    setTimeout(() => {
+                        selTimeDig.classList.remove('selected');
+                        selTimeText.classList.remove('selected');
+                    }, 500);
+                }
+                selTimeDig = null;
+                selTimeText = null;
+            }
+        }
+
+        // --- GRAMMAR GAME LOGIC ---
+        const grammarData = [
+            { item: '️ (Clock)', distance: 'far', num: 'singular', q: '_____ clock is very big!', ans: 'That' },
+            { item: '💍 (Rings)', distance: 'far', num: 'plural', q: 'Are _____ rings for men or women?', ans: 'those' },
+            { item: '💡 (Lamp)', distance: 'near', num: 'singular', q: '_____ lamp\'s really nice.', ans: 'This' },
+            { item: '💻 (Laptops)', distance: 'far', num: 'plural', q: '_____ laptops are all new.', ans: 'Those' },
+            { item: '🧣 (Scarf)', distance: 'near', num: 'singular', q: 'I like _____ scarf.', ans: 'This' },
+            { item: '🧤 (Gloves)', distance: 'near', num: 'plural', q: 'Are _____ your gloves?', ans: 'these' }
+        ];
+
+        function initGrammar() {
+            const container = document.getElementById('grammar-container');
+            container.innerHTML = '';
+            grammarData.forEach((item, index) => {
+                let div = document.createElement('div');
+                div.className = 'grammar-scenario';
+                
+                let distIcon = item.distance === 'near' ? '👇 (Near)' : '👉 (Far)';
+                let numIcon = item.num === 'singular' ? '1️⃣' : '2️';
+
+                let html = `
+                    <div class="visual-cue">
+                        ${item.item}
+                        <span class="distance-marker">${distIcon} ${numIcon}</span>
+                    </div>
+                    <div style="flex:1; margin-left: 20px; font-size: 18px;">
+                        <p>${item.q}</p>
+                        <div class="grammar-options">
+                            <button class="opt-btn" onclick="checkGrammar(this, 'This', '${item.ans}')">This</button>
+                            <button class="opt-btn" onclick="checkGrammar(this, 'That', '${item.ans}')">That</button>
+                            <button class="opt-btn" onclick="checkGrammar(this, 'These', '${item.ans}')">These</button>
+                            <button class="opt-btn" onclick="checkGrammar(this, 'Those', '${item.ans}')">Those</button>
+                        </div>
+                    </div>
+                `;
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+        }
+
+        function checkGrammar(btn, chosen, correct) {
+            // Case insensitive check
+            if (chosen.toLowerCase() === correct.toLowerCase()) {
+                btn.style.background = '#d4edda';
+                btn.style.borderColor = 'green';
+                addScore(5);
+                // Disable siblings
+                let siblings = btn.parentElement.children;
+                for(let sib of siblings) sib.disabled = true;
+            } else {
+                btn.style.background = '#f8d7da';
+                btn.style.borderColor = 'red';
+            }
+        }
+
+        // Initialize all games on load
+        initVocab();
+        initAdj();
+        initTime();
+        initGrammar();
+
+    </script>
+</body>
+</html>
