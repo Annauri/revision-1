@@ -1,607 +1,594 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Practice Game</title>
-    <style>
-        :root {
-            --primary: #4A90E2;
-            --secondary: #50E3C2;
-            --accent: #FF6B6B;
-            --bg: #F4F7F6;
-            --text: #333;
-            --card-bg: #fff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Stuff Quest – English practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFD93D; --dots:rgba(27,31,77,.12);
+  --card:#FFFDF6; --text:#1B1F4D; --line:#1B1F4D; --muted:#4a4f80;
+  --coral:#FF6B6B; --mint:#2EC4B6; --violet:#8B6CFF; --sky:#4DA8FF; --pink:#FF7EB6; --sun:#FFB627;
+  --ok:#3DDC84; --bad:#FF5A5F; --face:#ffffff;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1D2159; --dots:rgba(255,255,255,.07);
+    --card:#2B3078; --text:#FFF8E1; --line:#0B0E33; --muted:#c5c8f5; --face:#FFFDF6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1D2159; --dots:rgba(255,255,255,.07);
+  --card:#2B3078; --text:#FFF8E1; --line:#0B0E33; --muted:#c5c8f5; --face:#FFFDF6;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; min-height:100vh; color:var(--text);
+  font-family:"Baloo 2","Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  background-color:var(--bg);
+  background-image:radial-gradient(var(--dots) 2px, transparent 2.5px);
+  background-size:22px 22px;
+  line-height:1.35;
+}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:4px solid var(--sky);outline-offset:3px}
+#app{max-width:760px;margin:0 auto;padding:18px 16px 40px}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+/* ---------- map ---------- */
+.hero{text-align:center;margin:10px 0 18px}
+.hero h1{
+  font-size:clamp(2.4rem,9vw,3.8rem);line-height:1;margin:0;font-weight:800;letter-spacing:-.5px;
+  color:#fff;-webkit-text-stroke:2px var(--line);paint-order:stroke fill;
+  text-shadow:4px 4px 0 var(--line);
+  transform:rotate(-2deg);
+}
+.hero p{margin:12px auto 0;max-width:34ch;font-size:1.1rem;font-weight:500}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.pill{
+  display:inline-flex;align-items:center;gap:6px;background:var(--card);
+  border:3px solid var(--line);border-radius:999px;padding:4px 14px;font-weight:700;
+  box-shadow:3px 3px 0 var(--line);
+}
+.iconbtn{background:var(--card);border:3px solid var(--line);border-radius:12px;width:46px;height:46px;font-size:1.3rem;box-shadow:3px 3px 0 var(--line)}
+.iconbtn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.tile{
+  position:relative;text-align:left;border:3px solid var(--line);border-radius:22px;
+  padding:14px 14px 12px;box-shadow:5px 5px 0 var(--line);color:#1B1F4D;
+  display:flex;flex-direction:column;gap:2px;min-height:150px;
+  transition:transform .12s;
+}
+.tile:hover{transform:translate(-2px,-2px) rotate(-1deg)}
+.tile:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--line)}
+.tile .em{font-size:2.6rem;line-height:1}
+.tile .t{font-size:1.25rem;font-weight:800;line-height:1.1;margin-top:6px}
+.tile .d{font-size:.95rem;font-weight:500;opacity:.85}
+.tile .st{margin-top:auto;font-size:1.15rem;letter-spacing:2px}
+.tile .num{position:absolute;top:10px;right:12px;width:30px;height:30px;border-radius:50%;background:#fff;border:3px solid #1B1F4D;display:grid;place-items:center;font-weight:800;font-size:.95rem}
+.tile.wide{grid-column:1/-1;min-height:auto;flex-direction:row;align-items:center;gap:14px}
+.tile.wide .st{margin-top:0;margin-left:auto}
+.c-coral{background:var(--coral)}.c-mint{background:var(--mint)}.c-violet{background:var(--violet);color:#fff}
+.c-sun{background:var(--sun)}.c-sky{background:var(--sky)}.c-pink{background:var(--pink)}
+.c-rainbow{background:linear-gradient(90deg,var(--coral),var(--sun),var(--mint),var(--sky),var(--violet))}
+.c-violet .num{color:#1B1F4D}
 
-        h1 {
-            color: var(--primary);
-            text-align: center;
-            margin-bottom: 10px;
-        }
+/* ---------- game ---------- */
+.hud{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.hud .title{font-weight:800;font-size:1.15rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar{height:18px;border:3px solid var(--line);border-radius:999px;background:var(--card);overflow:hidden;margin-bottom:16px}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--mint) 0 12px,#27b0a3 12px 24px);transition:width .35s}
+.card{
+  background:var(--card);border:3px solid var(--line);border-radius:26px;
+  box-shadow:6px 6px 0 var(--line);padding:20px 18px;
+}
+.qnum{font-weight:700;color:var(--muted);font-size:1rem}
+.prompt{font-size:1.45rem;font-weight:800;margin:2px 0 12px;line-height:1.2}
+.visual{display:flex;justify-content:center;align-items:center;margin:6px 0 18px;min-height:110px}
+.big{font-size:6.5rem;line-height:1;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.15))}
+.clue{
+  font-size:1.4rem;font-weight:700;text-align:center;background:var(--sun);color:#1B1F4D;
+  border:3px solid var(--line);border-radius:18px;padding:14px 18px;max-width:30ch;transform:rotate(-1deg);
+}
+.sentence{font-size:1.55rem;font-weight:700;text-align:center;line-height:1.3}
+.gap{display:inline-block;min-width:3.4em;border-bottom:4px dashed var(--coral);color:var(--coral);text-align:center}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.opt{
+  background:var(--card);border:3px solid var(--line);border-radius:16px;padding:14px 10px;
+  font-size:1.25rem;font-weight:700;box-shadow:0 5px 0 var(--line);min-height:64px;line-height:1.15;
+}
+.opt:hover:not(:disabled){background:var(--sun);color:#1B1F4D}
+.opt:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 var(--line)}
+.opt:disabled{cursor:default}
+.opt.correct{background:var(--ok);color:#1B1F4D;animation:pop .35s}
+.opt.wrong{background:var(--bad);color:#fff;animation:shake .35s}
+.opt.dim{opacity:.55}
+.opts.clocks .opt{padding:8px;display:grid;place-items:center}
+.opts.clocks svg{width:100%;max-width:140px;height:auto}
+.feedback{margin-top:16px;min-height:0}
+.fb{
+  border:3px solid var(--line);border-radius:18px;padding:12px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  font-weight:700;font-size:1.15rem;color:#1B1F4D;
+}
+.fb.ok{background:#C9F7DC}.fb.no{background:#FFD3D4}
+.fb .msg{flex:1;min-width:180px}
+.fb .tip{display:block;font-weight:500;font-size:1rem;margin-top:2px}
+.btn{
+  border:3px solid var(--line);border-radius:14px;padding:10px 20px;font-weight:800;font-size:1.15rem;
+  background:var(--violet);color:#fff;box-shadow:0 5px 0 var(--line);
+}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--line)}
+.btn.alt{background:var(--card);color:var(--text)}
+.btn.sm{padding:6px 12px;font-size:1rem}
+.say{background:#fff;color:#1B1F4D}
 
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-        }
+/* scene for this/that */
+.scene{display:flex;align-items:flex-end;gap:4px;width:100%;max-width:520px;background:linear-gradient(transparent 70%, rgba(46,196,182,.35) 70%);border-radius:14px;padding:10px 12px}
+.scene .person{font-size:4.2rem;line-height:1}
+.scene .point{font-size:2.4rem;line-height:1;margin-bottom:22px}
+.scene .road{flex:1;border-bottom:5px dotted var(--muted);margin:0 6px 28px}
+.scene .items{line-height:1;white-space:nowrap}
+.scene.near .items{font-size:3.6rem;margin-right:auto}
+.scene.far .items{font-size:2.2rem}
 
-        /* Navigation Tabs */
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
+/* spelling */
+.slots{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-bottom:18px}
+.slot{width:42px;height:50px;border:3px solid var(--line);border-radius:10px;background:var(--face);color:#1B1F4D;font-size:1.6rem;font-weight:800;display:grid;place-items:center;padding:0}
+.slot.empty{background:transparent;border-style:dashed}
+.fixed{width:18px;display:grid;place-items:center;font-size:1.6rem;font-weight:800}
+.slots.ok .slot{background:var(--ok)}
+.slots.no .slot{background:var(--bad);color:#fff;animation:shake .35s}
+.tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.tilebtn{width:50px;height:54px;border:3px solid var(--line);border-radius:12px;background:var(--sun);color:#1B1F4D;font-size:1.6rem;font-weight:800;box-shadow:0 4px 0 var(--line);padding:0}
+.tilebtn:disabled{visibility:hidden}
+.tilebtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.row{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
 
-        .tab-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            background-color: #fff;
-            color: var(--primary);
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-        }
-
-        .tab-btn.active {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        /* Game Containers */
-        .game-section {
-            display: none;
-            width: 100%;
-            max-width: 900px;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            animation: fadeIn 0.5s;
-        }
-
-        .game-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h2 {
-            border-bottom: 3px solid var(--secondary);
-            padding-bottom: 10px;
-            color: var(--text);
-        }
-
-        /* --- Game 1: Vocabulary Match --- */
-        .match-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-        }
-
-        .col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .match-item {
-            padding: 15px;
-            background: #f0f0f0;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 18px;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-            user-select: none;
-        }
-
-        .match-item:hover {
-            background: #e0e0e0;
-        }
-
-        .match-item.selected {
-            border-color: var(--primary);
-            background: #e3f2fd;
-        }
-
-        .match-item.correct {
-            background: #d4edda;
-            border-color: #28a745;
-            color: #155724;
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        .emoji-large {
-            font-size: 32px;
-        }
-
-        /* --- Game 2: Adjectives --- */
-        .quiz-question {
-            margin-bottom: 20px;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 10px;
-            border-left: 5px solid var(--accent);
-        }
-
-        .options {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .opt-btn {
-            padding: 10px 20px;
-            border: 2px solid var(--primary);
-            background: white;
-            color: var(--primary);
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .opt-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .feedback {
-            margin-top: 10px;
-            font-weight: bold;
-            min-height: 24px;
-        }
-        .feedback.correct { color: green; }
-        .feedback.wrong { color: red; }
-
-        /* --- Game 3: Time --- */
-        .time-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .time-card {
-            background: #fff;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-        }
-        
-        .time-card:hover { border-color: var(--primary); }
-        .time-card.selected { background: #e3f2fd; border-color: var(--primary); }
-        .time-card.correct { background: #d4edda; border-color: green; }
-
-        .clock-face {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        /* --- Game 4: Grammar (This/That) --- */
-        .grammar-scenario {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fff;
-            border: 2px solid #eee;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-        }
-
-        .visual-cue {
-            font-size: 40px;
-            position: relative;
-        }
-        
-        .distance-marker {
-            font-size: 12px;
-            color: #999;
-            display: block;
-            text-align: center;
-        }
-
-        .grammar-options button {
-            margin-left: 10px;
-        }
-
-        /* Score Board */
-        .score-board {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--primary);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            z-index: 100;
-        }
-
-    </style>
+/* end */
+.end{text-align:center}
+.end .stars{font-size:3.4rem;letter-spacing:6px;margin:6px 0}
+.end h2{font-size:2.2rem;margin:0;line-height:1.1}
+.end .sc{font-size:1.3rem;font-weight:700}
+.confetti{position:fixed;top:-20px;width:12px;height:18px;border:2px solid var(--line);border-radius:3px;z-index:50;animation:fall linear forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@keyframes pop{50%{transform:scale(1.06)}}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:420px){
+  .opt{font-size:1.1rem}
+  .big{font-size:5.4rem}
+  .slot{width:34px;height:44px;font-size:1.35rem}
+  .tilebtn{width:44px;height:48px;font-size:1.4rem}
+  .tile .t{font-size:1.1rem}
+}
+</style>
 </head>
 <body>
+<main id="app"></main>
 
-    <div class="score-board">Score: <span id="score">0</span></div>
+<script>
+/* ================= DATA ================= */
+const PERSONAL = [
+  {w:"cap", e:"🧢", c:"You wear it on your head. It has a peak at the front."},
+  {w:"driving licence", e:"🪪", c:"You need this card to drive a car."},
+  {w:"earrings", e:null, c:"You wear them in your ears."},
+  {w:"gloves", e:"🧤", c:"You wear them on your hands when it's cold."},
+  {w:"hairbrush", e:null, c:"You use it to make your hair tidy."},
+  {w:"handbag", e:"👜", c:"A bag that many women carry every day."},
+  {w:"make-up", e:"💄", c:"Lipstick, eyeshadow and mascara."},
+  {w:"necklace", e:null, c:"You wear it around your neck. It's jewellery."},
+  {w:"notebook", e:"📓", c:"You write notes in it."},
+  {w:"phone charger", e:"🔌", c:"You need it when your phone battery is low."},
+  {w:"purse", e:"👛", c:"A small bag for coins and money."},
+  {w:"scarf", e:"🧣", c:"You wear it around your neck in winter."},
+  {w:"sweater", e:null, c:"A warm top with long sleeves. You wear it in winter."},
+  {w:"wallet", e:null, c:"A small flat thing for money and cards. It fits in your pocket."}
+];
+const HOME = [
+  {w:"bike", e:"🚲", c:"It has two wheels. You ride it."},
+  {w:"board games", e:"🎲", c:"Monopoly and Scrabble are ..."},
+  {w:"books", e:"📚", c:"You read them."},
+  {w:"camera", e:"📷", c:"You take photos with it."},
+  {w:"clock", e:"🕰️", c:"It tells you the time. It's on the wall."},
+  {w:"lamp", e:null, c:"It gives light. It's on your desk or next to your bed."},
+  {w:"laptop", e:"💻", c:"A small computer you can carry."},
+  {w:"pictures", e:"🖼️", c:"You put them on the wall. They're beautiful to look at."},
+  {w:"rings", e:"💍", c:"You wear them on your fingers."},
+  {w:"skateboard", e:"🛹", c:"A board with four small wheels."},
+  {w:"suitcase", e:"🧳", c:"You put your clothes in it when you travel."},
+  {w:"sunglasses", e:"🕶️", c:"You wear them when it's sunny."},
+  {w:"tennis racket", e:"🎾", c:"You hit the ball with it in a tennis game."},
+  {w:"umbrella", e:"☂️", c:"You need it when it rains."}
+];
+const ADJ_SENT = [
+  ["This ring is ___ . It's yellow and very expensive.","gold"],
+  ["My suitcase is very ___ . I can't carry it!","heavy"],
+  ["My phone doesn't work. It's ___ .","broken"],
+  ["Our clock is ___ , like a circle.","round"],
+  ["The picture has four equal sides. It's ___ .","square"],
+  ["This scarf feels really nice. It's very ___ .","soft"],
+  ["My laptop is new and ___ .","modern"],
+  ["This camera is from 1970. It's very ___ .","old"],
+  ["My bag is the colour of chocolate. It's ___ .","brown"],
+  ["I can walk all day in these shoes. They're very ___ .","comfortable"],
+  ["This bike is very ___ . I can carry it with one hand.","light"],
+  ["An umbrella is very ___ when it rains.","useful"],
+  ["This necklace was my grandmother's. It's very ___ to me.","special"],
+  ["Wow, your earrings are ___ ! I love them.","beautiful"],
+  ["Our house has a very ___ garden. It's really big.","large"]
+];
+const ADJS = ["beautiful","broken","brown","comfortable","gold","heavy","large","light","modern","old","round","soft","special","square","useful"];
+const DEMO = [
+  {s:"clock",p:"clocks",e:"🕰️",a:["very big","old","beautiful"]},
+  {s:"camera",p:"cameras",e:"📷",a:["modern","heavy","new"]},
+  {s:"umbrella",p:"umbrellas",e:"☂️",a:["useful","large","blue"]},
+  {s:"bike",p:"bikes",e:"🚲",a:["light","new","old"]},
+  {s:"suitcase",p:"suitcases",e:"🧳",a:["heavy","yellow","large"]},
+  {s:"laptop",p:"laptops",e:"💻",a:["all new","modern","light"]},
+  {s:"ring",p:"rings",e:"💍",a:["gold","beautiful","special"]},
+  {s:"scarf",p:"scarves",e:"🧣",a:["soft","red","beautiful"]},
+  {s:"cap",p:"caps",e:"🧢",a:["cool","new","black"]},
+  {s:"skateboard",p:"skateboards",e:"🛹",a:["old","light","cool"]},
+  {s:"handbag",p:"handbags",e:"👜",a:["really nice","green","modern"]},
+  {s:"notebook",p:"notebooks",e:"📓",a:["useful","old","new"]}
+];
+const HW = ["twelve","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve"];
+const PAST = {5:"five",10:"ten",20:"twenty",25:"twenty-five"};
+const DIG = {5:"oh five",10:"ten",15:"fifteen",20:"twenty",25:"twenty-five",30:"thirty",35:"thirty-five",40:"forty",45:"forty-five",50:"fifty",55:"fifty-five"};
+const MINS = [0,5,10,15,20,25,30,35,40,45,50,55];
 
-    <h1>English Practice Zone</h1>
-    <p class="subtitle">Select a topic to start practicing!</p>
+/* ================= HELPERS ================= */
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const cap1 = s => s.charAt(0).toUpperCase()+s.slice(1);
+const app = document.getElementById("app");
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="showSection('vocab')">1. Vocabulary (Objects)</button>
-        <button class="tab-btn" onclick="showSection('adj')">2. Adjectives</button>
-        <button class="tab-btn" onclick="showSection('time')">3. Time</button>
-        <button class="tab-btn" onclick="showSection('grammar')">4. This/That/These/Those</button>
+function store(k,v){try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; }}
+let STARS = store("msq-stars") || {};
+let SOUND = store("msq-sound"); if(SOUND===null) SOUND = true;
+
+let actx=null;
+function tone(freqs,type="triangle",dur=.12){
+  if(!SOUND) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    freqs.forEach((f,i)=>{
+      const o=actx.createOscillator(), g=actx.createGain();
+      o.type=type; o.frequency.value=f; o.connect(g); g.connect(actx.destination);
+      const t=actx.currentTime+i*dur;
+      g.gain.setValueAtTime(.18,t); g.gain.exponentialRampToValueAtTime(.001,t+dur*1.6);
+      o.start(t); o.stop(t+dur*1.7);
+    });
+  }catch(e){}
+}
+const good = () => tone([660,880,1100]);
+const bad  = () => tone([220,160],"sawtooth",.15);
+
+function speak(t){
+  try{
+    const u=new SpeechSynthesisUtterance(t); u.lang="en-GB"; u.rate=.9;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- time phrases ---------- */
+function classic(h,m){
+  const nx = h%12+1;
+  if(m===0) return `${HW[h]} o'clock`;
+  if(m===15) return `a quarter past ${HW[h]}`;
+  if(m===30) return `half past ${HW[h]}`;
+  if(m===45) return `a quarter to ${HW[nx]}`;
+  if(m<30) return `${PAST[m]} past ${HW[h]}`;
+  return `${PAST[60-m]} to ${HW[nx]}`;
+}
+function digital(h,m){ return m===0 ? `${HW[h]} o'clock` : `${HW[h]} ${DIG[m]}`; }
+function phrase(h,m){ return Math.random()<.5 ? classic(h,m) : digital(h,m); }
+
+function clockSVG(h,m){
+  let s = `<svg viewBox="0 0 200 200" role="img" aria-label="clock"><circle cx="100" cy="100" r="90" fill="#fff" stroke="#2EC4B6" stroke-width="10"/><circle cx="100" cy="100" r="95" fill="none" stroke="#1B1F4D" stroke-width="3"/>`;
+  for(let i=0;i<60;i++){
+    const a=i*6*Math.PI/180, big=i%5===0, r1=big?70:76, r2=82;
+    s+=`<line x1="${100+r1*Math.sin(a)}" y1="${100-r1*Math.cos(a)}" x2="${100+r2*Math.sin(a)}" y2="${100-r2*Math.cos(a)}" stroke="#1B1F4D" stroke-width="${big?4:1.5}" stroke-linecap="round"/>`;
+  }
+  for(let n=1;n<=12;n++){
+    const a=n*30*Math.PI/180, r=56;
+    s+=`<text x="${100+r*Math.sin(a)}" y="${100-r*Math.cos(a)+6}" text-anchor="middle" font-size="${n%3===0?20:14}" font-weight="700" fill="#1B1F4D" font-family="Baloo 2, sans-serif">${n}</text>`;
+  }
+  const ha=((h%12)+m/60)*30*Math.PI/180, ma=m*6*Math.PI/180;
+  s+=`<line x1="100" y1="100" x2="${100+42*Math.sin(ha)}" y2="${100-42*Math.cos(ha)}" stroke="#1B1F4D" stroke-width="9" stroke-linecap="round"/>`;
+  s+=`<line x1="100" y1="100" x2="${100+68*Math.sin(ma)}" y2="${100-68*Math.cos(ma)}" stroke="#FF6B6B" stroke-width="6" stroke-linecap="round"/>`;
+  s+=`<circle cx="100" cy="100" r="7" fill="#1B1F4D"/></svg>`;
+  return s;
+}
+function timeDistractors(h,m){
+  const key=(a,b)=>a+":"+b, own=key(h,m), seen=new Set([own]), out=[];
+  let tricky=[];
+  if(m!==0 && m!==30) tricky.push([h,60-m]);
+  tricky.push([h%12+1,m],[h===1?12:h-1,m]);
+  if(m>0) tricky.push([m/5,(h*5)%60]);
+  tricky=shuffle(tricky);
+  while(tricky.length<12) tricky.push([1+Math.floor(Math.random()*12),pick(MINS)]);
+  for(const [a,b] of tricky){ const k=key(a,b); if(!seen.has(k)){seen.add(k);out.push([a,b]);} if(out.length===3) break; }
+  return out;
+}
+
+/* ================= QUESTION GENERATORS ================= */
+function vocabQs(set,n){
+  return shuffle(set).slice(0,n).map(it=>{
+    const useEmoji = it.e && Math.random()<.65;
+    return {
+      kind:"choice",
+      prompt: useEmoji ? "What is this?" : "Read the clue. What is it?",
+      visual: useEmoji ? `<div class="big" aria-hidden="true">${it.e}</div>` : `<div class="clue">${it.c}</div>`,
+      options: shuffle([it.w, ...shuffle(set.filter(x=>x!==it)).slice(0,3).map(x=>x.w)]),
+      answer: it.w, say: it.w,
+      tip: useEmoji ? it.c : (it.e ? `${it.e} ${it.w}` : "")
+    };
+  });
+}
+function spellQs(n){
+  return shuffle([...PERSONAL,...HOME]).slice(0,n).map(it=>({
+    kind:"spell",
+    prompt:"Spell the word. Tap the letters.",
+    visual: it.e ? `<div class="big" aria-hidden="true">${it.e}</div>` : `<div class="clue">${it.c}</div>`,
+    answer: it.w, say: it.w, tip: it.e ? it.c : ""
+  }));
+}
+function timeQs(n){
+  const used=new Set(), qs=[];
+  while(qs.length<n){
+    const h=1+Math.floor(Math.random()*12), m=pick(MINS), k=h+":"+m;
+    if(used.has(k)) continue; used.add(k);
+    const ds=timeDistractors(h,m);
+    const tip = classic(h,m)===digital(h,m) ? `It's ${classic(h,m)}.` : `It's ${classic(h,m)} = ${digital(h,m)}.`;
+    if(qs.length%2===0){
+      const ans=phrase(h,m);
+      qs.push({kind:"choice",prompt:"What's the time?",visual:`<div style="width:200px">${clockSVG(h,m)}</div>`,
+        options:shuffle([ans,...ds.map(([a,b])=>phrase(a,b))]),answer:ans,say:"It's "+ans,tip});
+    }else{
+      const ans=phrase(h,m);
+      const opts=shuffle([[h,m],...ds]);
+      qs.push({kind:"choice",layout:"clocks",prompt:"Tap the right clock:",
+        visual:`<div class="clue">It's ${ans}.</div>`,
+        options:opts.map(([a,b])=>a+":"+b), labels:Object.fromEntries(opts.map(([a,b])=>[a+":"+b,clockSVG(a,b)])),
+        answer:h+":"+m,say:"It's "+ans,tip});
+    }
+  }
+  return qs;
+}
+function demoQs(n){
+  return shuffle(DEMO).slice(0,n).map(it=>{
+    const near=Math.random()<.5, plural=Math.random()<.5;
+    const ans = near ? (plural?"these":"this") : (plural?"those":"that");
+    const a=pick(it.a);
+    const t = plural
+      ? pick([`___ ${it.p} are ${a}.`,`Are ___ ${it.p} yours?`,`I really like ___ ${it.p}.`])
+      : pick([`___ ${it.s} is ${a}.`,`Is ___ ${it.s} yours?`,`I really like ___ ${it.s}.`]);
+    const start=t.startsWith("___");
+    const opts=["this","that","these","those"].map(o=>start?cap1(o):o);
+    const items=(it.e+" ").repeat(plural?3:1).trim();
+    const tips={this:"One thing, near you (here) → this",that:"One thing, far from you (there) → that",these:"Two or more things, near you → these",those:"Two or more things, far from you → those"};
+    return {
+      kind:"choice",prompt:"Choose the correct word.",
+      visual:`<div style="width:100%"><div class="scene ${near?"near":"far"}" aria-hidden="true"><span class="person">🧍</span><span class="point">👉</span>${near?"":'<span class="road"></span>'}<span class="items">${items}</span></div><p class="sentence">${t.replace("___",'<span class="gap">?</span>')}</p></div>`,
+      options:opts,answer:start?cap1(ans):ans,say:t.replace("___",start?cap1(ans):ans),tip:tips[ans],sentence:t
+    };
+  });
+}
+function adjQs(n){
+  return shuffle(ADJ_SENT).slice(0,n).map(([s,a])=>({
+    kind:"choice",prompt:"Choose the best adjective.",
+    visual:`<p class="sentence">${s.replace("___",'<span class="gap">?</span>').replace(/ ([.,!])/g,"$1")}</p>`,
+    options:shuffle([a,...shuffle(ADJS.filter(x=>x!==a)).slice(0,3)]),
+    answer:a,say:s.replace("___",a).replace(/ ([.,!])/g,"$1"),tip:""
+  }));
+}
+
+const LEVELS = [
+  {id:"personal",title:"Personal things",desc:"wallet, scarf, necklace…",emoji:"👜",color:"c-coral",make:()=>vocabQs(PERSONAL,8)},
+  {id:"home",title:"Home & hobbies",desc:"laptop, bike, umbrella…",emoji:"🚲",color:"c-mint",make:()=>vocabQs(HOME,8)},
+  {id:"spell",title:"Spell it!",desc:"Build the words letter by letter",emoji:"🔤",color:"c-violet",make:()=>spellQs(6)},
+  {id:"time",title:"What's the time?",desc:"half past, a quarter to…",emoji:"⏰",color:"c-sun",make:()=>timeQs(8)},
+  {id:"demo",title:"This, that, these, those",desc:"Near or far? One or more?",emoji:"👉",color:"c-sky",make:()=>demoQs(8)},
+  {id:"adj",title:"Describe it",desc:"heavy, soft, modern…",emoji:"✨",color:"c-pink",make:()=>adjQs(8)},
+  {id:"mix",title:"Mixed challenge",desc:"A bit of everything!",emoji:"🏆",color:"c-rainbow",wide:true,
+   make:()=>shuffle([...vocabQs(PERSONAL,2),...vocabQs(HOME,2),...spellQs(1),...timeQs(2),...demoQs(2),...adjQs(2)])}
+];
+
+/* ================= STATE / SCREENS ================= */
+let S = null;
+const starsFor = (sc,tot) => { const r=sc/tot; return r===1?3:r>=.75?2:r>=.5?1:0; };
+const starStr = n => "⭐".repeat(n)+"☆".repeat(3-n);
+
+function showMap(){
+  S=null;
+  const total=Object.values(STARS).reduce((a,b)=>a+b,0);
+  app.innerHTML = `
+    <div class="topbar">
+      <span class="pill">⭐ ${total} / ${LEVELS.length*3}</span>
+      <button class="iconbtn" id="snd" aria-label="Sound on or off">${SOUND?"🔊":"🔇"}</button>
     </div>
+    <header class="hero">
+      <h1>My Stuff Quest</h1>
+      <p>Practise things we have, telling the time, this / that and adjectives. Pick a level!</p>
+    </header>
+    <div class="grid">
+      ${LEVELS.map((L,i)=>`
+        <button class="tile ${L.color} ${L.wide?"wide":""}" data-l="${i}">
+          ${L.wide?"":`<span class="num">${i+1}</span>`}
+          <span class="em" aria-hidden="true">${L.emoji}</span>
+          <span><span class="t">${L.title}</span><br><span class="d">${L.desc}</span></span>
+          <span class="st" aria-label="${STARS[L.id]||0} stars">${starStr(STARS[L.id]||0)}</span>
+        </button>`).join("")}
+    </div>`;
+  app.querySelectorAll(".tile").forEach(b=>b.onclick=()=>startLevel(+b.dataset.l));
+  document.getElementById("snd").onclick=()=>{SOUND=!SOUND;store("msq-sound",SOUND);showMap();};
+  window.scrollTo(0,0);
+}
 
-    <!-- SECTION 1: VOCABULARY -->
-    <div id="vocab" class="game-section active">
-        <h2>Match the words with the pictures</h2>
-        <p>Click a word on the left, then click the matching emoji on the right.</p>
-        <div class="match-container">
-            <div class="col" id="vocab-words">
-                <!-- Populated by JS -->
-            </div>
-            <div class="col" id="vocab-images">
-                <!-- Populated by JS -->
-            </div>
-        </div>
-        <button onclick="initVocab()" style="margin-top:20px; padding:10px; cursor:pointer;">Reset Game</button>
+function startLevel(i){
+  const L=LEVELS[i];
+  S={li:i,L,qs:L.make(),idx:0,score:0,streak:0,done:false};
+  showQ();
+}
+
+function showQ(){
+  const q=S.qs[S.idx]; S.done=false;
+  app.innerHTML = `
+    <div class="hud">
+      <button class="iconbtn" id="home" aria-label="Back to levels">✕</button>
+      <span class="title">${S.L.emoji} ${S.L.title}</span>
+      <span class="pill" aria-label="score">⭐ ${S.score}</span>
+      <span class="pill" aria-label="streak">🔥 ${S.streak}</span>
     </div>
+    <div class="bar"><i style="width:${S.idx/S.qs.length*100}%"></i></div>
+    <section class="card">
+      <div class="qnum">Question ${S.idx+1} of ${S.qs.length}</div>
+      <div class="prompt">${q.prompt}</div>
+      <div class="visual">${q.visual}</div>
+      <div id="zone"></div>
+      <div class="feedback" id="fb" aria-live="polite"></div>
+    </section>`;
+  document.getElementById("home").onclick=showMap;
+  if(q.kind==="choice") renderChoice(q); else renderSpell(q);
+  window.scrollTo(0,0);
+}
 
-    <!-- SECTION 2: ADJECTIVES -->
-    <div id="adj" class="game-section">
-        <h2>Choose the correct adjective</h2>
-        <div id="adj-container">
-            <!-- Populated by JS -->
-        </div>
-    </div>
+function renderChoice(q){
+  const z=document.getElementById("zone");
+  z.innerHTML=`<div class="opts ${q.layout==="clocks"?"clocks":""}">${q.options.map((o,i)=>
+    `<button class="opt" data-v="${o}">${q.labels?q.labels[o]:o}</button>`).join("")}</div>`;
+  z.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    if(S.done) return;
+    const ok=b.dataset.v===q.answer;
+    z.querySelectorAll(".opt").forEach(x=>{
+      x.disabled=true;
+      if(x.dataset.v===q.answer) x.classList.add("correct");
+      else if(x!==b) x.classList.add("dim");
+    });
+    if(!ok) b.classList.add("wrong");
+    if(q.sentence) document.querySelector(".gap").textContent = q.answer;
+    finish(ok,q);
+  });
+}
 
-    <!-- SECTION 3: TIME -->
-    <div id="time" class="game-section">
-        <h2>Match the times</h2>
-        <p>Click the digital time, then click the correct phrase.</p>
-        <div class="match-container">
-            <div class="col" id="time-digital">
-                <!-- Populated by JS -->
-            </div>
-            <div class="col" id="time-text">
-                <!-- Populated by JS -->
-            </div>
-        </div>
-        <button onclick="initTime()" style="margin-top:20px; padding:10px; cursor:pointer;">Reset Game</button>
-    </div>
+function renderSpell(q){
+  const z=document.getElementById("zone");
+  const slots=[...q.answer].map(ch=>/[a-z]/.test(ch)?{ch,t:null}:{ch,fixed:true});
+  let tiles=shuffle([...q.answer].filter(ch=>/[a-z]/.test(ch))).map(ch=>({ch,used:false}));
+  const draw=()=>{
+    z.innerHTML=`<div class="slots" id="slots">${slots.map((s,i)=>s.fixed
+        ?`<span class="fixed">${s.ch===" "?"&nbsp;":s.ch}</span>`
+        :`<button class="slot ${s.t===null?"empty":""}" data-i="${i}" aria-label="letter ${i+1}">${s.t===null?"":tiles[s.t].ch}</button>`).join("")}</div>
+      <div class="tiles">${tiles.map((t,i)=>`<button class="tilebtn" data-t="${i}" ${t.used?"disabled":""}>${t.ch}</button>`).join("")}</div>
+      <div class="row"><button class="btn alt sm" id="clr">↺ Clear</button></div>`;
+    z.querySelectorAll(".tilebtn").forEach(b=>b.onclick=()=>place(+b.dataset.t));
+    z.querySelectorAll(".slot").forEach(b=>b.onclick=()=>{
+      if(S.done) return; const s=slots[+b.dataset.i];
+      if(s.t!==null){tiles[s.t].used=false;s.t=null;draw();}
+    });
+    document.getElementById("clr").onclick=()=>{ if(S.done) return; slots.forEach(s=>{if(!s.fixed)s.t=null}); tiles.forEach(t=>t.used=false); draw(); };
+  };
+  const place=ti=>{
+    if(S.done||tiles[ti].used) return;
+    const s=slots.find(s=>!s.fixed&&s.t===null); if(!s) return;
+    s.t=ti; tiles[ti].used=true; draw();
+    if(slots.every(s=>s.fixed||s.t!==null)){
+      const word=slots.map(s=>s.fixed?s.ch:tiles[s.t].ch).join("");
+      const ok=word===q.answer;
+      if(!ok){ slots.forEach(s=>{ if(!s.fixed){ s.t=null; } }); }
+      S.done=true;
+      const el=document.getElementById("slots");
+      if(ok){ el.classList.add("ok"); z.querySelectorAll("button").forEach(b=>b.disabled=true); }
+      else{
+        el.outerHTML=`<div class="slots no" id="slots">${[...word].map(c=>c===" "||c==="-"?`<span class="fixed">${c===" "?"&nbsp;":c}</span>`:`<span class="slot">${c}</span>`).join("")}</div>`;
+        z.querySelectorAll("button").forEach(b=>b.disabled=true);
+      }
+      finish(ok,q);
+    }
+  };
+  S.spellType=ch=>{ const i=tiles.findIndex(t=>!t.used&&t.ch===ch); if(i>-1) place(i); };
+  draw();
+}
 
-    <!-- SECTION 4: GRAMMAR -->
-    <div id="grammar" class="game-section">
-        <h2>This / That / These / Those</h2>
-        <p>Look at the distance (👇 near, 👉 far) and number (1 or many).</p>
-        <div id="grammar-container">
-            <!-- Populated by JS -->
-        </div>
-    </div>
+function finish(ok,q){
+  S.done=true;
+  if(ok){S.score++;S.streak++;good();} else {S.streak=0;bad();}
+  const cheers=["Great!","Well done!","Excellent!","Perfect!","Super!","Brilliant!"];
+  const shown = q.labels ? q.say.replace(/^It's /,"") : q.answer;
+  const last = S.idx===S.qs.length-1;
+  document.getElementById("fb").innerHTML=`
+    <div class="fb ${ok?"ok":"no"}">
+      <span class="msg">${ok?"✅ "+pick(cheers):"❌ The answer is: <u>"+(q.kind==="spell"?q.answer:shown)+"</u>"}
+        ${q.tip?`<span class="tip">💡 ${q.tip}</span>`:""}</span>
+      <button class="btn sm say" id="say" aria-label="Listen">🔊 Listen</button>
+      <button class="btn" id="next">${last?"Finish 🏁":"Next ➜"}</button>
+    </div>`;
+  document.querySelectorAll(".pill")[0].textContent="⭐ "+S.score;
+  document.querySelectorAll(".pill")[1].textContent="🔥 "+S.streak;
+  document.getElementById("say").onclick=()=>speak(q.say);
+  const nx=document.getElementById("next"); nx.onclick=next; nx.focus({preventScroll:true});
+  document.getElementById("fb").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
 
-    <script>
-        let score = 0;
-        const scoreEl = document.getElementById('score');
+function next(){
+  if(S.idx<S.qs.length-1){S.idx++;showQ();}
+  else showEnd();
+}
 
-        function addScore(points) {
-            score += points;
-            scoreEl.innerText = score;
-        }
+function showEnd(){
+  const tot=S.qs.length, st=starsFor(S.score,tot);
+  if(st>(STARS[S.L.id]||0)){STARS[S.L.id]=st;store("msq-stars",STARS);}
+  const title=["Keep practising!","Good try!","Great job!","Amazing!"][st];
+  const hasNext = S.li < LEVELS.length-1;
+  app.innerHTML=`
+    <section class="card end">
+      <div style="font-size:4rem" aria-hidden="true">${["💪","🙂","🎉","🏆"][st]}</div>
+      <h2>${title}</h2>
+      <div class="stars" aria-label="${st} stars">${starStr(st)}</div>
+      <p class="sc">You got ${S.score} out of ${tot}.</p>
+      <div class="row">
+        <button class="btn" id="again">↺ Play again</button>
+        ${hasNext?`<button class="btn alt" id="nextL">Next level ➜</button>`:""}
+        <button class="btn alt" id="map">All levels</button>
+      </div>
+    </section>`;
+  const li=S.li;
+  document.getElementById("again").onclick=()=>startLevel(li);
+  if(hasNext) document.getElementById("nextL").onclick=()=>startLevel(li+1);
+  document.getElementById("map").onclick=showMap;
+  if(st>=2){ tone([523,659,784,1046],"triangle",.13); confetti(); }
+  S.done=true; S.ended=true;
+}
 
-        function showSection(id) {
-            document.querySelectorAll('.game-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.target.classList.add('active');
-        }
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cols=["#FF6B6B","#2EC4B6","#8B6CFF","#FFB627","#4DA8FF","#FF7EB6"];
+  for(let i=0;i<50;i++){
+    const d=document.createElement("div"); d.className="confetti";
+    d.style.left=Math.random()*100+"vw"; d.style.background=pick(cols);
+    d.style.animationDuration=(1.8+Math.random()*1.8)+"s"; d.style.animationDelay=Math.random()*.6+"s";
+    document.body.appendChild(d); setTimeout(()=>d.remove(),4500);
+  }
+}
 
-        // --- VOCAB GAME LOGIC ---
-        const vocabData = [
-            { word: 'necklace', emoji: '📿' },
-            { word: 'gloves', emoji: '🧤' },
-            { word: 'scarf', emoji: '🧣' },
-            { word: 'sweater', emoji: '🧥' },
-            { word: 'handbag', emoji: '👜' },
-            { word: 'cap', emoji: '🧢' },
-            { word: 'wallet', emoji: '💰' },
-            { word: 'notebook', emoji: '📓' },
-            { word: 'phone charger', emoji: '🔌' },
-            { word: 'laptop', emoji: '💻' },
-            { word: 'sunglasses', emoji: '🕶️' },
-            { word: 'books', emoji: '📚' },
-            { word: 'camera', emoji: '📷' },
-            { word: 'watch', emoji: '⌚' },
-            { word: 'lamp', emoji: '💡' },
-            { word: 'bike', emoji: '🚲' },
-            { word: 'rings', emoji: '💍' },
-            { word: 'skateboard', emoji: '🛹' },
-            { word: 'suitcase', emoji: '🧳' },
-            { word: 'umbrella', emoji: '️☂️' }
-        ];
+/* keyboard: 1-4 to answer, letters to spell, Enter for next */
+document.addEventListener("keydown",e=>{
+  if(!S||S.ended) return;
+  const q=S.qs[S.idx];
+  if(e.key==="Enter"&&S.done){ const n=document.getElementById("next"); if(n){e.preventDefault();n.click();} return; }
+  if(S.done) return;
+  if(q.kind==="choice"&&/^[1-4]$/.test(e.key)){ const b=document.querySelectorAll(".opt")[+e.key-1]; if(b) b.click(); }
+  if(q.kind==="spell"&&/^[a-zA-Z]$/.test(e.key)) S.spellType(e.key.toLowerCase());
+});
 
-        let selectedWord = null;
-        let selectedEmoji = null;
-
-        function initVocab() {
-            const wordsCol = document.getElementById('vocab-words');
-            const imgsCol = document.getElementById('vocab-images');
-            wordsCol.innerHTML = '';
-            imgsCol.innerHTML = '';
-            selectedWord = null;
-            selectedEmoji = null;
-
-            // Shuffle arrays
-            let words = [...vocabData].sort(() => Math.random() - 0.5);
-            let imgs = [...vocabData].sort(() => Math.random() - 0.5);
-
-            words.forEach(item => {
-                let div = document.createElement('div');
-                div.className = 'match-item';
-                div.innerText = item.word;
-                div.dataset.val = item.word;
-                div.onclick = () => handleWordClick(div);
-                wordsCol.appendChild(div);
-            });
-
-            imgs.forEach(item => {
-                let div = document.createElement('div');
-                div.className = 'match-item emoji-large';
-                div.innerText = item.emoji;
-                div.dataset.val = item.word; // match by word key
-                div.onclick = () => handleImgClick(div);
-                imgsCol.appendChild(div);
-            });
-        }
-
-        function handleWordClick(el) {
-            if(el.classList.contains('correct')) return;
-            document.querySelectorAll('#vocab-words .match-item').forEach(i => i.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedWord = el;
-            checkMatch();
-        }
-
-        function handleImgClick(el) {
-            if(el.classList.contains('correct')) return;
-            document.querySelectorAll('#vocab-images .match-item').forEach(i => i.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedEmoji = el;
-            checkMatch();
-        }
-
-        function checkMatch() {
-            if (selectedWord && selectedEmoji) {
-                if (selectedWord.dataset.val === selectedEmoji.dataset.val) {
-                    selectedWord.classList.add('correct');
-                    selectedEmoji.classList.add('correct');
-                    selectedWord.classList.remove('selected');
-                    selectedEmoji.classList.remove('selected');
-                    addScore(10);
-                } else {
-                    setTimeout(() => {
-                        selectedWord.classList.remove('selected');
-                        selectedEmoji.classList.remove('selected');
-                    }, 500);
-                }
-                selectedWord = null;
-                selectedEmoji = null;
-            }
-        }
-
-        // --- ADJECTIVE GAME LOGIC ---
-        const adjData = [
-            { q: "My phone is _____. I can't call anyone.", options: ['beautiful', 'broken', 'soft'], ans: 'broken' },
-            { q: "The gold ring is very _____.", options: ['heavy', 'beautiful', 'broken'], ans: 'beautiful' },
-            { q: "This feather pillow is very _____.", options: ['soft', 'hard', 'square'], ans: 'soft' },
-            { q: "The suitcase is full of books. It is _____.", options: ['light', 'heavy', 'modern'], ans: 'heavy' },
-            { q: "I like your _____ sweater. Is it new?", options: ['comfortable', 'broken', 'old'], ans: 'comfortable' },
-            { q: "The clock on the wall is _____.", options: ['round', 'soft', 'broken'], ans: 'round' }
-        ];
-
-        function initAdj() {
-            const container = document.getElementById('adj-container');
-            container.innerHTML = '';
-            adjData.forEach((item, index) => {
-                let div = document.createElement('div');
-                div.className = 'quiz-question';
-                let html = `<p><strong>${index+1}.</strong> ${item.q}</p><div class="options">`;
-                item.options.forEach(opt => {
-                    html += `<button class="opt-btn" onclick="checkAdj(this, '${opt}', '${item.ans}')">${opt}</button>`;
-                });
-                html += `</div><div class="feedback"></div>`;
-                div.innerHTML = html;
-                container.appendChild(div);
-            });
-        }
-
-        function checkAdj(btn, chosen, correct) {
-            const feedback = btn.parentElement.nextElementSibling;
-            if (chosen === correct) {
-                btn.style.background = '#d4edda';
-                btn.style.borderColor = 'green';
-                feedback.innerText = "Correct!";
-                feedback.className = "feedback correct";
-                addScore(5);
-            } else {
-                btn.style.background = '#f8d7da';
-                btn.style.borderColor = 'red';
-                feedback.innerText = "Try again!";
-                feedback.className = "feedback wrong";
-            }
-        }
-
-        // --- TIME GAME LOGIC ---
-        const timeData = [
-            { digital: '08:00', text: "eight o'clock" },
-            { digital: '04:30', text: "half past four" },
-            { digital: '02:15', text: "a quarter past two" },
-            { digital: '11:45', text: "a quarter to twelve" },
-            { digital: '07:55', text: "five to eight" },
-            { digital: '01:20', text: "twenty past one" }
-        ];
-
-        let selTimeDig = null;
-        let selTimeText = null;
-
-        function initTime() {
-            const digCol = document.getElementById('time-digital');
-            const textCol = document.getElementById('time-text');
-            digCol.innerHTML = '';
-            textCol.innerHTML = '';
-            selTimeDig = null;
-            selTimeText = null;
-
-            let digs = [...timeData].sort(() => Math.random() - 0.5);
-            let texts = [...timeData].sort(() => Math.random() - 0.5);
-
-            digs.forEach(item => {
-                let div = document.createElement('div');
-                div.className = 'time-card';
-                div.innerHTML = `<div class="clock-face">🕒</div><strong>${item.digital}</strong>`;
-                div.dataset.val = item.digital;
-                div.onclick = () => handleTimeDigClick(div);
-                digCol.appendChild(div);
-            });
-
-            texts.forEach(item => {
-                let div = document.createElement('div');
-                div.className = 'time-card';
-                div.innerText = item.text;
-                div.dataset.val = item.digital; // link by digital time
-                div.onclick = () => handleTimeTextClick(div);
-                textCol.appendChild(div);
-            });
-        }
-
-        function handleTimeDigClick(el) {
-            if(el.classList.contains('correct')) return;
-            document.querySelectorAll('#time-digital .time-card').forEach(i => i.classList.remove('selected'));
-            el.classList.add('selected');
-            selTimeDig = el;
-            checkTimeMatch();
-        }
-
-        function handleTimeTextClick(el) {
-            if(el.classList.contains('correct')) return;
-            document.querySelectorAll('#time-text .time-card').forEach(i => i.classList.remove('selected'));
-            el.classList.add('selected');
-            selTimeText = el;
-            checkTimeMatch();
-        }
-
-        function checkTimeMatch() {
-            if (selTimeDig && selTimeText) {
-                if (selTimeDig.dataset.val === selTimeText.dataset.val) {
-                    selTimeDig.classList.add('correct');
-                    selTimeText.classList.add('correct');
-                    selTimeDig.classList.remove('selected');
-                    selTimeText.classList.remove('selected');
-                    addScore(10);
-                } else {
-                    setTimeout(() => {
-                        selTimeDig.classList.remove('selected');
-                        selTimeText.classList.remove('selected');
-                    }, 500);
-                }
-                selTimeDig = null;
-                selTimeText = null;
-            }
-        }
-
-        // --- GRAMMAR GAME LOGIC ---
-        const grammarData = [
-            { item: '️ (Clock)', distance: 'far', num: 'singular', q: '_____ clock is very big!', ans: 'That' },
-            { item: '💍 (Rings)', distance: 'far', num: 'plural', q: 'Are _____ rings for men or women?', ans: 'those' },
-            { item: '💡 (Lamp)', distance: 'near', num: 'singular', q: '_____ lamp\'s really nice.', ans: 'This' },
-            { item: '💻 (Laptops)', distance: 'far', num: 'plural', q: '_____ laptops are all new.', ans: 'Those' },
-            { item: '🧣 (Scarf)', distance: 'near', num: 'singular', q: 'I like _____ scarf.', ans: 'This' },
-            { item: '🧤 (Gloves)', distance: 'near', num: 'plural', q: 'Are _____ your gloves?', ans: 'these' }
-        ];
-
-        function initGrammar() {
-            const container = document.getElementById('grammar-container');
-            container.innerHTML = '';
-            grammarData.forEach((item, index) => {
-                let div = document.createElement('div');
-                div.className = 'grammar-scenario';
-                
-                let distIcon = item.distance === 'near' ? '👇 (Near)' : '👉 (Far)';
-                let numIcon = item.num === 'singular' ? '1️⃣' : '2️';
-
-                let html = `
-                    <div class="visual-cue">
-                        ${item.item}
-                        <span class="distance-marker">${distIcon} ${numIcon}</span>
-                    </div>
-                    <div style="flex:1; margin-left: 20px; font-size: 18px;">
-                        <p>${item.q}</p>
-                        <div class="grammar-options">
-                            <button class="opt-btn" onclick="checkGrammar(this, 'This', '${item.ans}')">This</button>
-                            <button class="opt-btn" onclick="checkGrammar(this, 'That', '${item.ans}')">That</button>
-                            <button class="opt-btn" onclick="checkGrammar(this, 'These', '${item.ans}')">These</button>
-                            <button class="opt-btn" onclick="checkGrammar(this, 'Those', '${item.ans}')">Those</button>
-                        </div>
-                    </div>
-                `;
-                div.innerHTML = html;
-                container.appendChild(div);
-            });
-        }
-
-        function checkGrammar(btn, chosen, correct) {
-            // Case insensitive check
-            if (chosen.toLowerCase() === correct.toLowerCase()) {
-                btn.style.background = '#d4edda';
-                btn.style.borderColor = 'green';
-                addScore(5);
-                // Disable siblings
-                let siblings = btn.parentElement.children;
-                for(let sib of siblings) sib.disabled = true;
-            } else {
-                btn.style.background = '#f8d7da';
-                btn.style.borderColor = 'red';
-            }
-        }
-
-        // Initialize all games on load
-        initVocab();
-        initAdj();
-        initTime();
-        initGrammar();
-
-    </script>
+showMap();
+</script>
 </body>
 </html>
